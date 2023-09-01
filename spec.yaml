@@ -1,0 +1,124 @@
+openapi: 3.0.0
+info:
+  title: Skin wound size API
+  description: The RESTful APIs lised below are designed to be used for deploying AI services for skin wound  size estimation.
+  version: v1
+servers:
+  - url: http://0.0.0.0:5003/
+
+paths:
+  /api/status/connection:
+    get:
+      summary: 'Check connection status of the server.'
+      description: 'Check connection status of the server.'
+      tags:
+        - status
+      responses:
+        '200':
+          description: 'Check server successfully.'
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 'Check OK'
+  /api/inference:
+    post:
+      summary: 'Upload an image to inference for wound size.'
+      description: 'Upload an image to inference for wound size.'
+      tags:
+        - inference
+      responses:
+        '202':
+          description: 'Create a new inference successfully.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mask_coordinate:
+                    $ref: '#/components/schemas/InferenceOutput'
+                  width:
+                    $ref: '#/components/schemas/width'
+                  height:
+                    $ref: '#/components/schemas/height'
+                  degree:
+                    $ref: '#/components/schemas/degree'
+                  area:
+                    $ref: '#/components/schemas/area'
+                  process_time:
+                    $ref: '#/components/schemas/process_time'
+                  unit:
+                    $ref: '#/components/schemas/unit'
+
+components:
+  responses:
+    InferenceDoesNotExistError:
+      description: 'Not Found.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                $ref: '#/components/schemas/Inference_404'
+            required:
+              - detail
+  parameters:
+      InferenceOutput:
+        description: 'InferenceOutput.'
+        name: InferenceOutput
+        in: path
+        schema:
+          $ref: '#/components/schemas/InferenceOutput'
+        required: true
+
+  schemas:
+      Inference_404:
+        type: string
+        enum:
+          - 'Inference matching query does not exist.'
+        example: 'Inference matching query does not exist.'
+
+      InferenceOutput:
+        description: 'items array that indicates the coordinate of the wound mask and the line.'
+        type: array
+        items:
+          type: array
+          items:
+            type: number
+            format: float
+        example: [[30.5,2.5],[3.5,2.2],[5.5,700.2]]
+
+      width:
+        description: 'Wound size width.'
+        type: number
+        format: float
+        example: 10.5
+      height:
+        description: 'Wound size height.'
+        type: number
+        format: float
+        example: 10.5
+      degree:
+        description: 'Wound size rotation degree.'
+        type: number
+        format: float
+        example: 10.5
+      area:
+        description: 'Wound size area.'
+        type: number
+        format: float
+        example: 10.5
+      process_time:
+        description: 'Wound size inference process time.'
+        type: number
+        format: float
+        example: 0.3
+      unit:
+        description: 'wound size height and width unit'
+        type: string
+        enum:
+          - 'cm'
+        example: cm
+    
+
